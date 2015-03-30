@@ -1,0 +1,2 @@
+debian/bin/cybercoind usr/bin
+src/cybercoind usr/lib/cybercoin
