@@ -24,7 +24,7 @@ class CReserveKey;
 class CWallet;
 
 static const int LAST_POW_BLOCK = 4138;
-static const int VPOS_SWITCH1_BLOCK = 21600;
+static const int VPOS_SWITCH1_BLOCK = 12000;
 static const int POS_START_BUFFER = 1350;
 
 /** The maximum allowed size for a serialized block, in bytes (network rule) */
@@ -77,11 +77,11 @@ vPOS[4]=500;
 vPOS[5]=1000;
 }else{
 vPOS[0]=1;
-vPOS[1]=5;
-vPOS[2]=10;
-vPOS[3]=20;
-vPOS[4]=50;
-vPOS[5]=100;
+vPOS[1]=2;
+vPOS[2]=3;
+vPOS[3]=4;
+vPOS[4]=5;
+vPOS[5]=7;
 }
 return vPOS;
 }
