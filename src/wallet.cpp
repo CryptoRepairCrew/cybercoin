@@ -1907,11 +1907,11 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
                 vwtxPrev.push_back(pcoin.first);
                 txNew.vout.push_back(CTxOut(0, scriptPubKeyOut));
 
-                //LogPrintf("pubkey--------------------%s\n", scriptPubKeyOut);
+		// For all past blocks before the forks pay the dev.
+		if(pindexPrev->nHeight < TAKEOVER_FORK_BLOCK) {
+                   txNew.vout.push_back(CTxOut(0, scriptDevKeyOut));
+		}
 
-                //if (GetWeight(nBlockTime, (int64_t)txNew.nTime) < GetStakeSplitAge())
-                //    txNew.vout.push_back(CTxOut(0, scriptPubKeyOut)); //split stake
-                txNew.vout.push_back(CTxOut(0, scriptDevKeyOut));
                 LogPrint("coinstake", "CreateCoinStake : added kernel type=%d\n", whichType);
                 fKernelFound = true;
                 break;

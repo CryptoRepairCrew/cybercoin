@@ -23,6 +23,7 @@ class CNode;
 class CReserveKey;
 class CWallet;
 
+static const int TAKEOVER_FORK_BLOCK =  10000000;
 static const int LAST_POW_BLOCK = 4138;
 static const int VPOS_SWITCH1_BLOCK = 12000;
 static const int POS_START_BUFFER = 1350;

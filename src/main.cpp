@@ -1575,8 +1575,11 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
         if(vtx.size()==4){
             devTxIdx=3;
         }
-        if(vtx[1].vout[devTxIdx].scriptPubKey!=scriptDevKeyOut)
-            return DoS(100, error("ConnectBlock() : No dev reward paid."));
+
+	if(pindex->nHeight < TAKEOVER_FORK_BLOCK) {
+           if(vtx[1].vout[devTxIdx].scriptPubKey!=scriptDevKeyOut)
+              return DoS(100, error("ConnectBlock() : No dev reward paid."));
+	}
 
         int64_t nCalculatedStakeReward = GetProofOfStakeReward(nValueIn, nFees,GetLastBlockIndex(pindexBest, true));
 
