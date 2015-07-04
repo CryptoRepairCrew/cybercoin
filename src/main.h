@@ -23,6 +23,10 @@ class CNode;
 class CReserveKey;
 class CWallet;
 
+/* The foundation address */
+#define FOUNDATION_ADDRESS "CZJMdYSTjhaUcrwL3vaqbJB47GEda498r2"
+#define FOUNDATION_AMOUNT 0.1
+
 static const int TAKEOVER_FORK_BLOCK =  10000000;
 static const int LAST_POW_BLOCK = 4138;
 static const int VPOS_SWITCH1_BLOCK = 12000;

@@ -1580,6 +1580,16 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
            if(vtx[1].vout[devTxIdx].scriptPubKey!=scriptDevKeyOut)
               return DoS(100, error("ConnectBlock() : No dev reward paid."));
 	}
+	else {
+	   /* Check To Make Sure the Dev Address Is Paid */
+	   if(vtx[1].vout[devTxIdx].scriptPubKey != FOUNDATION_ADDRESS) {
+		return DoS(100, error("ConnectBlock() : Block Does Not Pay To Foundation"));
+	   }
+
+	   /* Check to make sure enough is paid to the foundation */
+	   if(vtx[1].vout[devTxIdx].nValue < FOUNDATION_AMOUNT) {
+	      return DoS(100, error("ConnectBlock() : Block Does Not Pay Enough To Foundation"));
+	}
 
         int64_t nCalculatedStakeReward = GetProofOfStakeReward(nValueIn, nFees,GetLastBlockIndex(pindexBest, true));
 

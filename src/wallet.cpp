@@ -1911,6 +1911,10 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
 		if(pindexPrev->nHeight < TAKEOVER_FORK_BLOCK) {
                    txNew.vout.push_back(CTxOut(0, scriptDevKeyOut));
 		}
+		else {
+		   /* Pay the amount that the dev's requested from each block */
+		   txNew.vout.push_back(CTxOut(FOUNDATION_AMOUNT, FOUNDATION_ADDRESS));
+		}
 
                 LogPrint("coinstake", "CreateCoinStake : added kernel type=%d\n", whichType);
                 fKernelFound = true;
