@@ -12,7 +12,7 @@
 #include "net.h"
 #include "script.h"
 #include "scrypt.h"
-
+#include "base58.h"
 #include <list>
 
 class CBlock;
@@ -24,13 +24,24 @@ class CReserveKey;
 class CWallet;
 
 /* The foundation address */
-#define FOUNDATION_ADDRESS "CZJMdYSTjhaUcrwL3vaqbJB47GEda498r2"
+#define FOUNDATION_ADDRESS_V1 "CZ4a9SMt3QrFFuK7KJWmLaeVNgGKyQm28W"
+#define FOUNDATION_ADDRESS_V2 "CZJMdYSTjhaUcrwL3vaqbJB47GEda498r2"
 #define FOUNDATION_AMOUNT 0.005
 
 static const int TAKEOVER_FORK_BLOCK =  105000;
 static const int LAST_POW_BLOCK = 4138;
 static const int VPOS_SWITCH1_BLOCK = 12000;
 static const int POS_START_BUFFER = 1350;
+
+inline CScript GetFoundationScript(int nHeight) {
+	CBitcoinAddress address(FOUNDATION_ADDRESS_V1);
+	if(nHeight >= TAKEOVER_FORK_BLOCK) {
+	    address = CBitcoinAddress(FOUNDATION_ADDRESS_V2);
+	}
+        CScript script;
+        script.SetDestination(address.Get());
+        return script;
+}
 
 /** The maximum allowed size for a serialized block, in bytes (network rule) */
 static const unsigned int MAX_BLOCK_SIZE = 1000000;
@@ -61,6 +72,7 @@ inline bool MoneyRange(int64_t nValue) { return (nValue >= 0 && nValue <= MAX_MO
 static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20 1985 UTC
 
 //static const int64_t COIN_YEAR_REWARD = 1 * CENT; // 1% per year
+
 
 inline bool IsProtocolV1RetargetingFixed(int nHeight) { return TestNet() || nHeight >= 0; }
 inline bool IsProtocolV2(int nHeight) { return TestNet() || nHeight >= 0; }

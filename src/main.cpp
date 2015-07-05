@@ -1565,32 +1565,26 @@ bool CBlock::ConnectBlock(CTxDB& txdb, CBlockIndex* pindex, bool fJustCheck)
     }
     if (IsProofOfStake())
     {
-        CScript scriptDevKeyOut;
-        scriptDevKeyOut << ParseHex("02734a349bba658ea4219c1454c152c8ff15f37809e136829209822af41c889d9c") << OP_CHECKSIG;
         // ppcoin: coin stake tx earns reward instead of paying fee
         uint64_t nCoinAge;
         if (!vtx[1].GetCoinAge(txdb, nCoinAge))
             return error("ConnectBlock() : %s unable to get coin age for coinstake", vtx[1].GetHash().ToString());
+	// Dev Payment Location
         int devTxIdx=2;
         if(vtx.size()==4){
             devTxIdx=3;
         }
 
-	if(pindex->nHeight < TAKEOVER_FORK_BLOCK) {
-           if(vtx[1].vout[devTxIdx].scriptPubKey!=scriptDevKeyOut)
+	if(vtx[1].vout[devTxIdx].scriptPubKey != GetFoundationScript(pindex->nHeight)) {
               return DoS(100, error("ConnectBlock() : No dev reward paid."));
 	}
-	else {
-	   /* Check To Make Sure the Dev Address Is Paid */
-	   if(vtx[1].vout[devTxIdx].scriptPubKey != FOUNDATION_ADDRESS) {
-		return DoS(100, error("ConnectBlock() : Block Does Not Pay To Foundation"));
-	   }
 
+	if(pindex->nHeight >= TAKEOVER_FORK_BLOCK) {
 	   /* Check to make sure enough is paid to the foundation */
 	   if(vtx[1].vout[devTxIdx].nValue < FOUNDATION_AMOUNT) {
 	      return DoS(100, error("ConnectBlock() : Block Does Not Pay Enough To Foundation"));
+	   }
 	}
-
         int64_t nCalculatedStakeReward = GetProofOfStakeReward(nValueIn, nFees,GetLastBlockIndex(pindexBest, true));
 
         if (nStakeReward > nCalculatedStakeReward+static_cast<int64_t>(nCalculatedStakeReward*0.005))

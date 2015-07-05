@@ -1856,8 +1856,6 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
                 vector<valtype> vSolutions;
                 txnouttype whichType;
                 CScript scriptPubKeyOut;
-                CScript scriptDevKeyOut;
-                scriptDevKeyOut << ParseHex("02734a349bba658ea4219c1454c152c8ff15f37809e136829209822af41c889d9c") << OP_CHECKSIG;
 
                 scriptPubKeyKernel = pcoin.first->vout[pcoin.second].scriptPubKey;
                 if (!Solver(scriptPubKeyKernel, whichType, vSolutions))
@@ -1906,15 +1904,7 @@ bool CWallet::CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int
                 nCredit += pcoin.first->vout[pcoin.second].nValue;
                 vwtxPrev.push_back(pcoin.first);
                 txNew.vout.push_back(CTxOut(0, scriptPubKeyOut));
-
-		// For all past blocks before the forks pay the dev.
-		if(pindexPrev->nHeight < TAKEOVER_FORK_BLOCK) {
-                   txNew.vout.push_back(CTxOut(0, scriptDevKeyOut));
-		}
-		else {
-		   /* Pay the amount that the dev's requested from each block */
-		   txNew.vout.push_back(CTxOut(FOUNDATION_AMOUNT, FOUNDATION_ADDRESS));
-		}
+		txNew.vout.push_back(CTxOut(0, GetFoundationScript(pindexPrev->nHeight)));
 
                 LogPrint("coinstake", "CreateCoinStake : added kernel type=%d\n", whichType);
                 fKernelFound = true;
